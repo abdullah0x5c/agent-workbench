@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.log
+npm-debug.log*
+
+.env
+.env.local
+.env.*.local
+
+.DS_Store
+.vercel
+*.tgz
+mongodb-data/
