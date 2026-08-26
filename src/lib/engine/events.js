@@ -1,0 +1,17 @@
+export const RUN_EVENTS = [
+  'run:started',
+  'run:finished',
+  'run:failed',
+  'node:started',
+  'node:finished',
+  'node:failed',
+  'node:skipped',
+  'span:started',
+  'span:delta',
+  'span:finished',
+  'span:failed',
+  'eval:started',
+  'eval:case',
+  'eval:finished',
+  'eval:failed',
+]
