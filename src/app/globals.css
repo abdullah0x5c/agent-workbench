@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+
+:root {
+  color-scheme: dark;
+  --aw-bg: #08080a;
+  --aw-panel: #111114;
+  --aw-border: #26262b;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--aw-bg);
+  color: #f4f4f5;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+}
+
+.react-flow {
+  --xy-background-color: #0b0b0e;
+  --xy-edge-stroke-default: #52525b;
+  --xy-edge-stroke-selected-default: #818cf8;
+  --xy-handle-background-color-default: #a1a1aa;
+  --xy-handle-border-color-default: #18181b;
+  background: #0b0b0e;
+}
+
+.react-flow__attribution {
+  background: transparent;
+  color: #3f3f46;
+}
+
+.react-flow__controls {
+  background: #18181b;
+  border: 1px solid var(--aw-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background: #18181b;
+  border-bottom: 1px solid var(--aw-border);
+  color: #e4e4e7;
+}
+
+.ws-panel {
+  background: var(--aw-panel);
+}
+
+.ws-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.ws-scroll::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 999px;
+  border: 2px solid var(--aw-panel);
+}
+
+.ws-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cm-editor {
+  font-size: 12.5px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+.cm-gutters {
+  background: #0b0b0d !important;
+  border-right: 1px solid #27272a !important;
+}
