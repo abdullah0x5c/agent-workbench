@@ -48,7 +48,7 @@ export async function POST(request, { params }) {
     }
 
     const judgeProvider = body.judgeProvider || undefined
-    const judgeModel = body.judgeModel || undefined
+    const judgeModel = body.judgeModel || process.env.JUDGE_MODEL || undefined
 
     const evalRun = await EvalRun.create({
       datasetId: dataset._id,

@@ -15,6 +15,8 @@ function formatDate(value) {
 export default function Dashboard() {
   const router = useRouter()
   const [workflows, setWorkflows] = useState([])
+  const [templates, setTemplates] = useState([])
+  const [templateId, setTemplateId] = useState('')
   const [health, setHealth] = useState(null)
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
@@ -23,14 +25,19 @@ export default function Dashboard() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [workflowsRes, healthRes] = await Promise.all([
+      const [workflowsRes, healthRes, templatesRes] = await Promise.all([
         fetch('/api/workflows'),
         fetch('/api/health').catch(() => null),
+        fetch('/api/templates').catch(() => null),
       ])
       const json = await workflowsRes.json()
       if (!workflowsRes.ok) throw new Error(json.error || 'Failed to load workflows')
       setWorkflows(json.workflows || [])
       if (healthRes?.ok) setHealth(await healthRes.json())
+      if (templatesRes?.ok) {
+        const templatesJson = await templatesRes.json()
+        setTemplates(templatesJson.templates || [])
+      }
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -50,7 +57,7 @@ export default function Dashboard() {
       const res = await fetch('/api/workflows', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify(templateId ? { template: templateId } : {}),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Failed to create workflow')
@@ -90,6 +97,19 @@ export default function Dashboard() {
           >
             Datasets
           </Link>
+          <select
+            value={templateId}
+            onChange={(event) => setTemplateId(event.target.value)}
+            className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-200"
+            aria-label="Workflow template"
+          >
+            <option value="">Blank template</option>
+            {templates.map((template) => (
+              <option key={template.id} value={template.id}>
+                {template.name}
+              </option>
+            ))}
+          </select>
           <button
             type="button"
             onClick={createWorkflow}
