@@ -14,3 +14,4 @@ npm-debug.log*
 .vercel
 *.tgz
 mongodb-data/
+!.env.example
