@@ -15,16 +15,38 @@ const { resolveProviderName, getProvider, listProviders } = await import(
 
 const originalAllow = process.env.ALLOW_REAL_PROVIDER
 const originalKey = process.env.OPENCODE_API_KEY
+const originalDefault = process.env.DEFAULT_PROVIDER
 
 afterEach(() => {
-  process.env.ALLOW_REAL_PROVIDER = originalAllow
-  process.env.OPENCODE_API_KEY = originalKey
+  for (const [name, value] of [
+    ['ALLOW_REAL_PROVIDER', originalAllow],
+    ['OPENCODE_API_KEY', originalKey],
+    ['DEFAULT_PROVIDER', originalDefault],
+  ]) {
+    if (value === undefined) delete process.env[name]
+    else process.env[name] = value
+  }
 })
 
 describe('resolveProviderName', () => {
   it('always resolves mock to mock', () => {
     process.env.ALLOW_REAL_PROVIDER = 'false'
     expect(resolveProviderName('mock')).toBe('mock')
+  })
+
+  it('honours DEFAULT_PROVIDER when nothing is requested', () => {
+    process.env.ALLOW_REAL_PROVIDER = 'true'
+    process.env.OPENCODE_API_KEY = 'key'
+    process.env.DEFAULT_PROVIDER = 'opencode'
+    expect(resolveProviderName()).toBe('opencode')
+    process.env.DEFAULT_PROVIDER = 'mock'
+    expect(resolveProviderName()).toBe('mock')
+  })
+
+  it('ignores DEFAULT_PROVIDER when real use is disabled', () => {
+    process.env.ALLOW_REAL_PROVIDER = 'false'
+    process.env.OPENCODE_API_KEY = 'key'
+    process.env.DEFAULT_PROVIDER = 'opencode'
     expect(resolveProviderName()).toBe('mock')
   })
 

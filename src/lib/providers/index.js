@@ -62,12 +62,13 @@ function genericProvider() {
  * subscription; everything transparently falls back to the mock provider.
  */
 export function resolveProviderName(requested) {
-  if (!requested || requested === 'mock') return 'mock'
+  const target = requested || process.env.DEFAULT_PROVIDER || 'mock'
+  if (target === 'mock') return 'mock'
   if (!allowRealProvider()) return 'mock'
-  if (requested === 'opencode' || requested === 'opencode-go') {
+  if (target === 'opencode' || target === 'opencode-go') {
     return hasOpenCodeKey() ? 'opencode' : 'mock'
   }
-  if (requested === 'openai-compatible' || requested === 'openai') {
+  if (target === 'openai-compatible' || target === 'openai') {
     return process.env.OPENAI_API_KEY ? 'openai-compatible' : 'mock'
   }
   return 'mock'
