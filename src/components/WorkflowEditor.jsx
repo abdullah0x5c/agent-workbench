@@ -112,6 +112,9 @@ function Editor({ workflow }) {
   const [tools, setTools] = useState({ builtins: [], tools: [] })
   const [bottomTab, setBottomTab] = useState('trace')
   const [bottomExpanded, setBottomExpanded] = useState(false)
+  const [showInspector, setShowInspector] = useState(true)
+  const [defaultModel, setDefaultModel] = useState('')
+  const [defaultProvider, setDefaultProvider] = useState('')
   const [showRunInput, setShowRunInput] = useState(false)
   const [runInput, setRunInput] = useState('')
 
@@ -157,6 +160,8 @@ function Editor({ workflow }) {
         if (cancelled) return
         setProviders(modelsJson.providers || [])
         setModels(modelsJson.models || [])
+        setDefaultModel(modelsJson.defaultModel || '')
+        setDefaultProvider(modelsJson.provider || '')
         setTools({ builtins: toolsJson.builtins || [], tools: toolsJson.tools || [] })
       } catch {
         /* offline is fine */
@@ -185,7 +190,6 @@ function Editor({ workflow }) {
         })
       )
       setSelectedId(id)
-      setBottomTab('node')
     },
     [setNodes]
   )
@@ -477,7 +481,7 @@ function Editor({ workflow }) {
   const bottomHeight = bottomExpanded ? '60vh' : '260px'
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <header className="flex flex-wrap items-center gap-2 border-b border-zinc-800 bg-zinc-950 px-4 py-2">
         <Link href="/" className="shrink-0 text-xs text-zinc-500 hover:text-zinc-200">
           ← workflows
@@ -493,7 +497,7 @@ function Editor({ workflow }) {
           onChange={(event) => setProvider(event.target.value)}
           className="rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs"
         >
-          <option value="">provider: default</option>
+          <option value="">{`provider: ${defaultProvider || 'default'}`}</option>
           {providers.map((entry) => (
             <option key={entry.name} value={entry.name} disabled={!entry.available}>
               {entry.label}
@@ -505,8 +509,8 @@ function Editor({ workflow }) {
           list="aw-editor-models"
           value={model}
           onChange={(event) => setModel(event.target.value)}
-          placeholder="model: default"
-          className="w-40 rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs"
+          placeholder={defaultModel ? `model: ${defaultModel}` : 'model: default'}
+          className="w-48 rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs"
         />
         <datalist id="aw-editor-models">
           {models.map((entry) => (
@@ -519,6 +523,13 @@ function Editor({ workflow }) {
         </span>
         <span className={`text-[11px] ${RUN_STATUS_STYLE[runStatus]}`}>run: {runStatus}</span>
 
+        <button
+          type="button"
+          onClick={() => setShowInspector((value) => !value)}
+          className="rounded-md border border-zinc-700 px-3 py-1.5 text-xs text-zinc-200 hover:bg-zinc-800"
+        >
+          {showInspector ? 'Hide panel' : 'Show panel'}
+        </button>
         <button
           type="button"
           onClick={() => setShowRunInput((value) => !value)}
@@ -554,7 +565,7 @@ function Editor({ workflow }) {
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         <NodePalette onAddNode={addNode} />
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -567,7 +578,6 @@ function Editor({ workflow }) {
               onConnect={onConnect}
               onNodeClick={(_event, node) => {
                 setSelectedId(node.id)
-                setBottomTab('node')
               }}
               onPaneClick={() => setSelectedId(null)}
               onAddNode={addNode}
@@ -579,7 +589,7 @@ function Editor({ workflow }) {
             style={{ height: bottomHeight }}
           >
             <div className="flex items-center gap-1 border-b border-zinc-800 px-3 py-1.5">
-              {['trace', 'node', 'log', 'history'].map((tab) => (
+              {['trace', 'log', 'history'].map((tab) => (
                 <button
                   key={tab}
                   type="button"
@@ -607,16 +617,6 @@ function Editor({ workflow }) {
 
             <div className="min-h-0 flex-1">
               {bottomTab === 'trace' ? <TraceView spans={spans} live={live} /> : null}
-              {bottomTab === 'node' ? (
-                <Inspector
-                  node={selectedNode}
-                  providers={providers}
-                  models={models}
-                  tools={tools}
-                  onUpdateData={updateNodeData}
-                  onDelete={deleteNode}
-                />
-              ) : null}
               {bottomTab === 'log' ? (
                 <div className="ws-scroll h-full overflow-y-auto p-3">
                   {events.length === 0 ? (
@@ -676,6 +676,17 @@ function Editor({ workflow }) {
             </div>
           </div>
         </div>
+
+        {showInspector ? (
+          <Inspector
+            node={selectedNode}
+            providers={providers}
+            models={models}
+            tools={tools}
+            onUpdateData={updateNodeData}
+            onDelete={deleteNode}
+          />
+        ) : null}
       </div>
     </div>
   )

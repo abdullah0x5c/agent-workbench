@@ -47,6 +47,32 @@ body {
   color: #e4e4e7;
 }
 
+.react-flow__minimap {
+  background: #111114;
+  border: 1px solid var(--aw-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(8, 8, 10, 0.72);
+}
+
+.react-flow__minimap-node {
+  stroke: none;
+}
+
+.react-flow__panel {
+  margin: 12px;
+}
+
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: #a1a1aa;
+  border: 2px solid #18181b;
+}
+
 .ws-panel {
   background: var(--aw-panel);
 }
