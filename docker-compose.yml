@@ -1,0 +1,34 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.runCommand({ ping: 1 })"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/agent_workbench
+      NEXT_PUBLIC_REALTIME: socket
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:3001
+      DEFAULT_PROVIDER: mock
+      ALLOW_REAL_PROVIDER: 'false'
+      PORT: '3000'
+      SOCKET_PORT: '3001'
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+
+volumes:
+  mongo-data:
